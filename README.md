@@ -6,7 +6,7 @@
 
 [![Website](https://img.shields.io/badge/anklebreaker--studio.com-blue?style=flat-square&logo=google-chrome&logoColor=white)](https://www.anklebreaker-studio.com)
 [![Sponsor](https://img.shields.io/badge/Sponsor_Me-ea4aaa?style=flat-square&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/AnkleBreaker-Studio)
-[![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/anklebreaker)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/jrgNeUn6Ft)
 
 </div>
 
