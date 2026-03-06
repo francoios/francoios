@@ -1,0 +1,38 @@
+name: Discord Sponsor Role Request
+description: Claim your Discord sponsor role
+title: Discord Role Request
+labels: [discord-role]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for sponsoring! 💛
+
+        Fill in the form below to receive your Discord role on the AnkleBreaker Studio server.
+
+        **How to find your Discord User ID:**
+        1. Open Discord Settings > Advanced > Enable **Developer Mode**
+        2. Right-click your username > **Copy User ID**
+        3. Paste it below
+
+        Make sure you have already joined the AnkleBreaker Studio Discord before submitting!
+
+  - type: input
+    id: discord-id
+    attributes:
+      label: Discord User ID
+      description: Your Discord User ID (17-20 digit number)
+      placeholder: "123456789012345678"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: role-type
+    attributes:
+      label: Which role are you claiming?
+      description: Select the role matching your sponsorship tier
+      options:
+        - "Private MCP Sponsor (Backer $15/month)"
+        - "MCP Priority Support ($100/month)"
+    validations:
+      required: true
