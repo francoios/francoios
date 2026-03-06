@@ -1,0 +1,83 @@
+name: Sponsor Team Manager (Personal)
+on:
+  sponsorship:
+    types: [created, cancelled, tier_changed, pending_cancellation]
+
+jobs:
+  manage-sponsor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handle sponsor event
+        uses: actions/github-script@v7
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        with:
+          github-token: ${{ secrets.ORG_ADMIN_TOKEN }}
+          script: |
+            const event = context.payload;
+            const sponsor = event.sponsorship.sponsor.login;
+            const tierName = event.sponsorship.tier.name;
+            const tierPrice = event.sponsorship.tier.monthly_price_in_dollars;
+            const action = event.action;
+            const org = 'AnkleBreaker-Studio';
+            const teamSlug = 'sponsors';
+            const MIN_TIER_PRICE = 15;
+            const DISCORD_CHANNEL = '1476975591692435620';
+
+            async function postDiscord(message) {
+              try {
+                const resp = await fetch(
+                  `https://discord.com/api/v10/channels/${DISCORD_CHANNEL}/messages`,
+                  {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': `Bot ${process.env.DISCORD_BOT_TOKEN}`,
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: message })
+                  }
+                );
+                if (!resp.ok) console.error(`Discord error: ${resp.status}`);
+              } catch (e) { console.error(`Discord post failed: ${e.message}`); }
+            }
+
+            if (action === 'created' || action === 'tier_changed') {
+              if (tierPrice >= MIN_TIER_PRICE) {
+                try {
+                  await github.rest.teams.addOrUpdateMembershipForUserInOrg({
+                    org, team_slug: teamSlug, username: sponsor, role: 'member'
+                  });
+                  console.log(`Added ${sponsor} to sponsors team`);
+                } catch (error) {
+                  console.error(`Failed to add ${sponsor}: ${error.message}`);
+                }
+
+                if (action === 'created') {
+                  if (tierPrice >= 100) {
+                    await postDiscord(
+                      `## 🔴 New MCP Priority Support Subscriber!\n\n` +
+                      `**${sponsor}** just joined as an **${tierName}** subscriber! Welcome to the inner circle! ❤️\n\n` +
+                      `Thank you for your incredible support! You now have priority access to our team. 🚀\n\n` +
+                      `> Don't forget to claim your **MCP Priority Support** Discord role in the [premium-mcps repo](https://github.com/AnkleBreaker-Studio/premium-mcps)!`
+                    );
+                  } else {
+                    await postDiscord(
+                      `## 🎉 New Sponsor!\n\n` +
+                      `**${sponsor}** just joined as a **${tierName}** sponsor! Welcome to the AnkleBreaker Studio family! ❤️\n\n` +
+                      `Thank you for supporting our MCP tools and open-source projects! 🚀\n\n` +
+                      `> Don't forget to claim your **Private MCP Sponsor** Discord role in the [premium-mcps repo](https://github.com/AnkleBreaker-Studio/premium-mcps)!`
+                    );
+                  }
+                }
+              } else if (action === 'tier_changed') {
+                try {
+                  await github.rest.teams.removeMembershipForUserInOrg({ org, team_slug: teamSlug, username: sponsor });
+                } catch (error) { console.log(`Note: ${sponsor} may not have been in team`); }
+              }
+            }
+
+            if (action === 'cancelled' || action === 'pending_cancellation') {
+              try {
+                await github.rest.teams.removeMembershipForUserInOrg({ org, team_slug: teamSlug, username: sponsor });
+              } catch (error) { console.log(`Note: ${sponsor} may not have been in team`); }
+            }
