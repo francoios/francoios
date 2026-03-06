@@ -31,15 +31,9 @@ My flagship open-source project: **145+ tools** giving AI full control over Unit
 Scene management, GameObject creation, C# scripting, multi-platform builds, animation, physics, lighting, audio, Shader Graph, profiling — all driven by AI.
 
 ### 🔧 Premium MCP Collection
-I also maintain a suite of professional MCP servers available to [sponsors](https://github.com/sponsors/AnkleBreaker-Studio):
+Beyond Unity MCP, I maintain a **growing collection of premium MCP servers** — covering everything from project management to version control, code review, and beyond. New MCPs are being built every day, and sponsors get instant access to the full collection as it grows.
 
-| Server | What It Does |
-|--------|-------------|
-| 🤖 Discord MCP | Full Discord server management from Claude |
-| 🎯 Jira MCP | 47+ tools — issues, boards, sprints, users |
-| 🔀 Plastic SCM MCP | Version control for Unity teams |
-| 🔍 CS Review MCP | C# code review & visual diff viewer |
-| 💼 LinkedIn MCP | LinkedIn prospecting automation |
+Check out [GitHub Sponsors](https://github.com/sponsors/AnkleBreaker-Studio) to unlock them all.
 
 ## Support My Work
 
