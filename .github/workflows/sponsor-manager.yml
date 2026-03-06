@@ -2,28 +2,6 @@ name: Sponsor Team Manager (Personal)
 on:
   sponsorship:
     types: [created, cancelled, tier_changed, pending_cancellation]
-  workflow_dispatch:
-    inputs:
-      test_username:
-        description: 'GitHub username to simulate sponsor for'
-        required: true
-      test_tier:
-        description: 'Tier name'
-        required: true
-        default: 'Backer'
-      test_price:
-        description: 'Monthly price in dollars'
-        required: true
-        default: '15'
-      test_action:
-        description: 'Simulate action'
-        required: true
-        default: 'created'
-        type: choice
-        options:
-          - created
-          - cancelled
-          - tier_changed
 
 jobs:
   manage-sponsor:
@@ -36,17 +14,15 @@ jobs:
         with:
           github-token: ${{ secrets.ORG_ADMIN_TOKEN }}
           script: |
-            const isTest = context.eventName === 'workflow_dispatch';
-            const sponsor = isTest ? '${{ inputs.test_username }}' : context.payload.sponsorship.sponsor.login;
-            const tierName = isTest ? '${{ inputs.test_tier }}' : context.payload.sponsorship.tier.name;
-            const tierPrice = isTest ? parseInt('${{ inputs.test_price }}') : context.payload.sponsorship.tier.monthly_price_in_dollars;
-            const action = isTest ? '${{ inputs.test_action }}' : context.payload.action;
+            const event = context.payload;
+            const sponsor = event.sponsorship.sponsor.login;
+            const tierName = event.sponsorship.tier.name;
+            const tierPrice = event.sponsorship.tier.monthly_price_in_dollars;
+            const action = event.action;
             const org = 'AnkleBreaker-Studio';
             const teamSlug = 'sponsors';
             const MIN_TIER_PRICE = 15;
             const DISCORD_CHANNEL = '1476975591692435620';
-
-            if (isTest) console.log(`[TEST MODE] Simulating ${action} for ${sponsor} at $${tierPrice}/mo (${tierName})`);
 
             async function postDiscord(message) {
               try {
