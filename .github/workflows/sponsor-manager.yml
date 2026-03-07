@@ -1,7 +1,31 @@
 name: Sponsor Team Manager (Personal)
 on:
-  sponsorship:
-    types: [created, cancelled, tier_changed, pending_cancellation]
+  repository_dispatch:
+    types: [sponsorship]
+  workflow_dispatch:
+    inputs:
+      test_username:
+        description: 'GitHub username to test with'
+        required: true
+        default: 'francoios'
+      test_tier:
+        description: 'Tier name'
+        required: true
+        default: 'Backer'
+      test_price:
+        description: 'Monthly price in dollars'
+        required: true
+        default: '15'
+      test_action:
+        description: 'Action type'
+        required: true
+        default: 'created'
+        type: choice
+        options:
+          - created
+          - cancelled
+          - tier_changed
+          - pending_cancellation
 
 jobs:
   manage-sponsor:
@@ -14,11 +38,23 @@ jobs:
         with:
           github-token: ${{ secrets.ORG_ADMIN_TOKEN }}
           script: |
-            const event = context.payload;
-            const sponsor = event.sponsorship.sponsor.login;
-            const tierName = event.sponsorship.tier.name;
-            const tierPrice = event.sponsorship.tier.monthly_price_in_dollars;
-            const action = event.action;
+            let sponsor, tierName, tierPrice, action;
+
+            if (context.eventName === 'repository_dispatch') {
+              const payload = context.payload.client_payload;
+              sponsor = payload.sponsorship.sponsor.login;
+              tierName = payload.sponsorship.tier.name;
+              tierPrice = payload.sponsorship.tier.monthly_price_in_dollars;
+              action = payload.action;
+              console.log(`Webhook event: ${action} from ${sponsor}`);
+            } else {
+              sponsor = '${{ github.event.inputs.test_username }}';
+              tierName = '${{ github.event.inputs.test_tier }}';
+              tierPrice = parseInt('${{ github.event.inputs.test_price }}');
+              action = '${{ github.event.inputs.test_action }}';
+              console.log(`Manual test: ${action} for ${sponsor}`);
+            }
+
             const org = 'AnkleBreaker-Studio';
             const teamSlug = 'sponsors';
             const MIN_TIER_PRICE = 15;
